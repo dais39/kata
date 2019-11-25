@@ -6,6 +6,9 @@ public class MidnightCalcService implements CalcService {
 
     @Override
     public long calc(HighwayDrive drive) {
-        return 30;
+        if(drive.canApplyMidnightDiscount()) {
+            return 30;
+        }
+        return 0;
     }
 }
