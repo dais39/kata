@@ -6,5 +6,5 @@ import kata.ex01.model.HighwayDrive;
  * @author kawasima
  */
 public interface DiscountService {
-    long calc(HighwayDrive drive);
+    Long calc(HighwayDrive drive);
 }

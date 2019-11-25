@@ -72,7 +72,7 @@ public class HighwayDrive implements Serializable {
 
     }
 
-    public Boolean canApplyHolidayDiscount() {
+    public Boolean canApplyWeekendDiscount() {
         return Arrays.asList(VehicleFamily.STANDARD, VehicleFamily.MOTORCYCLE, VehicleFamily.MINI).contains(this.vehicleFamily)
                 && this.routeType.equals(RouteType.RURAL)
                 && (isWeekend(this.enteredAt) || isWeekend(this.exitedAt) ||
@@ -81,8 +81,8 @@ public class HighwayDrive implements Serializable {
 
     }
 
-    public Boolean canNotApplyMidnightDiscount() {
-        return this.enteredAt.getHour() > 4 && this.exitedAt.getHour() > this.enteredAt.getHour();
+    public Boolean canApplyMidnightDiscount() {
+        return this.enteredAt.getHour() <= 4 || this.exitedAt.getHour() < this.enteredAt.getHour();
     }
 
     public Boolean isOverTenTimesDrive() {
