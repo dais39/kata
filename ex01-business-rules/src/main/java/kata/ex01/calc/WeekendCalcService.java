@@ -6,6 +6,10 @@ public class WeekendCalcService implements CalcService {
 
     @Override
     public long calc(HighwayDrive drive) {
-        return 30;
+        if (drive.canApplyWeekendDiscount()) {
+            return 30;
+        }
+
+        return 0;
     }
 }
