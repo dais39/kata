@@ -1,7 +1,11 @@
 package kata.ex01.model;
 
+import kata.ex01.util.HolidayUtils;
+
 import java.io.Serializable;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 /**
  * @author kawasima
@@ -17,23 +21,23 @@ public class HighwayDrive implements Serializable {
     public HighwayDrive() {
     }
 
-    public LocalDateTime getEnteredAt() {
+    private LocalDateTime getEnteredAt() {
         return this.enteredAt;
     }
 
-    public LocalDateTime getExitedAt() {
+    private LocalDateTime getExitedAt() {
         return this.exitedAt;
     }
 
-    public VehicleFamily getVehicleFamily() {
+    private VehicleFamily getVehicleFamily() {
         return this.vehicleFamily;
     }
 
-    public RouteType getRouteType() {
+    private RouteType getRouteType() {
         return this.routeType;
     }
 
-    public Driver getDriver() {
+    private Driver getDriver() {
         return this.driver;
     }
 
@@ -55,6 +59,46 @@ public class HighwayDrive implements Serializable {
 
     public void setDriver(Driver driver) {
         this.driver = driver;
+    }
+
+    public boolean canApplyWeekdayDiscount() {
+        return isWeekday(this.enteredAt)
+                && isWeekday(this.exitedAt)
+                && !HolidayUtils.isHoliday(this.enteredAt.toLocalDate())
+                && !HolidayUtils.isHoliday(this.exitedAt.toLocalDate())
+                && this.routeType.equals(RouteType.RURAL)
+                && ((isRange(this.enteredAt.getHour(), 6, 9) || isRange(this.exitedAt.getHour(), 6, 9))
+                || (isRange(this.enteredAt.getHour(), 17, 20) || isRange(this.exitedAt.getHour(), 17, 20)));
+
+    }
+
+    public Boolean canApplyHolidayDiscount() {
+        return Arrays.asList(VehicleFamily.STANDARD, VehicleFamily.MOTORCYCLE, VehicleFamily.MINI).contains(this.vehicleFamily)
+                && this.routeType.equals(RouteType.RURAL)
+                && (isWeekend(this.enteredAt) || isWeekend(this.exitedAt) ||
+                HolidayUtils.isHoliday(this.enteredAt.toLocalDate()) ||
+                HolidayUtils.isHoliday(this.exitedAt.toLocalDate()));
+
+    }
+
+    public Boolean canNotApplyMidnightDiscount() {
+        return this.enteredAt.getHour() > 4 && this.exitedAt.getHour() > this.enteredAt.getHour();
+    }
+
+    public Boolean isOverTenTimesDrive() {
+        return this.driver.getCountPerMonth() >= 10;
+    }
+
+    private Boolean isWeekend(LocalDateTime at) {
+        return Arrays.asList(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY).contains(at.getDayOfWeek());
+    }
+
+    private Boolean isWeekday(LocalDateTime at) {
+        return !isWeekend(at);
+    }
+
+    private Boolean isRange(long at, long from, long to) {
+        return at >= from && at <= to;
     }
 
     public String toString() {
